@@ -12,23 +12,19 @@ Each skill lives in its own directory under `skills/`, anchored by a `SKILL.md` 
 
 ## Installation
 
-Using the [skills CLI](https://github.com/obra/skills):
+Using [`gh skill`](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) (requires GitHub CLI v2.90.0 or later):
 
 ```bash
-npx skills add knokmki612/safety-deletion
+# Preview a skill before installing
+gh skill preview knokmki612/skills safety-deletion
+
+# Install a skill
+gh skill install knokmki612/skills safety-deletion
 ```
 
-Or copy a skill directory manually into your skills directory:
+`gh skill` writes the skill to the correct directory for your agent. Pass `--agent` (e.g. `claude-code`) and `--scope` (`user` or `project`) to control the target, and pin a version with `--pin <tag-or-sha>`.
 
-```bash
-# Enable for a single project
-cp -r skills/safety-deletion .claude/skills/
-
-# Enable for all projects (user-wide)
-cp -r skills/safety-deletion ~/.claude/skills/
-```
-
-Once installed, Agentic tool reads the `description` from each `SKILL.md` and invokes the skill automatically when a relevant operation comes up.
+Once installed, the agent reads the `description` from each `SKILL.md` and invokes the skill automatically when a relevant operation comes up.
 
 ## Skill structure
 
