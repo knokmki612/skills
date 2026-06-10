@@ -1,6 +1,6 @@
 ---
 name: safety-deletion
-description: Safely delete files and directories inside a git-managed working tree by routing every deletion through `git rm` or `git clean` instead of destructive commands (`rm`, `rmdir`, `shred`, `unlink`, `find -delete`, `truncate`). Use whenever removing any path from a repository — source files, generated artifacts, stray downloads, ignored caches, empty directories — so deletions remain recoverable through git history, the reflog, or at minimum go through git's working-tree safety checks. Trigger before invoking any non-git deletion command and whenever the user asks to delete, remove, drop, wipe, purge, or clean up files.
+description: Safely delete files or directories in a git working tree by routing deletions through `git rm` or `git clean` instead of `rm`, `rmdir`, `shred`, `unlink`, `find -delete`, or `truncate`, keeping removals recoverable via git. Use before any non-git deletion command, and when the user asks to delete, remove, drop, wipe, purge, or clean up files.
 ---
 
 # Safe Deletion via Git
