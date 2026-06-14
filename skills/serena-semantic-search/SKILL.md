@@ -1,6 +1,6 @@
 ---
 name: serena-semantic-search
-description: Use Serena's semantic, symbol-level read tools (find_symbol, find_declaration, find_implementations, find_referencing_symbols, get_symbols_overview, get_diagnostics_for_file) as a smarter, more token-efficient alternative to plain grep/ripgrep and reading whole files. Use when locating where a symbol is defined or used, finding implementations, mapping a file's structure, tracing call sites, surfacing compiler/LSP diagnostics, or understanding code relationships — and when the Serena MCP server is available. For plain text search, line-range reads, directory listing, and file-finding, prefer the existing grep/sed/Read tools instead.
+description: Use Serena's semantic, symbol-level read tools instead of plain grep or reading whole files when working in a codebase: locating where a symbol is defined or used, finding implementations, mapping a file's structure, tracing call sites, or surfacing compiler/LSP diagnostics. Needs the Serena MCP server. For plain text search, line-range reads, or listing files, prefer the existing grep/sed/Read tools.
 license: CC-BY-4.0
 ---
 
