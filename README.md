@@ -9,6 +9,7 @@ Each skill lives in its own directory under `skills/`, anchored by a `SKILL.md` 
 | Skill | Description |
 | --- | --- |
 | [safety-deletion](skills/safety-deletion/) | Route every deletion inside a git-managed working tree through `git rm` / `git clean` instead of destructive commands (`rm`, `rmdir`, `shred`, …), keeping deletions recoverable through git history and the reflog. |
+| [serena-semantic-search](skills/serena-semantic-search/) | Use Serena's semantic, symbol-level read tools as a smarter, more token-efficient alternative to plain grep and reading whole files when searching, navigating, and understanding a codebase. |
 
 ## Installation
 
