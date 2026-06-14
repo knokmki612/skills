@@ -11,7 +11,7 @@ Names are verified against `oraios/serena` `src/serena/tools/symbol_tools.py` an
 `file_tools.py`; if a call 404s the upstream tool may have been renamed —
 cross-check against the `excluded_tools` list in the dotfiles `serena_config.yml`.
 
-### Class A — semantic (language-server backed, no grep/sed/ed equivalent)
+### Class A — semantic (language-server backed, no grep/sed/awk equivalent)
 
 These are the reason to use Serena. A regex or line tool cannot reproduce them.
 

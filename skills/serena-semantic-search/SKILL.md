@@ -23,7 +23,7 @@ can already do the job. Only the first class is the reason to use Serena.
 **Class A — semantic, no text-tool equivalent → use Serena.** A language server
 resolves these; regex/line tools structurally cannot reproduce them.
 
-| Intent | Tool | Why grep/sed/ed can't |
+| Intent | Tool | Why grep/sed/awk can't |
 | --- | --- | --- |
 | "Where is `Foo` / `Foo.bar` defined?" | `find_symbol` (add `include_body` for the source) | grep matches the *text* `Foo`, not the resolved symbol (misses re-exports, picks up comments/strings/namesakes). |
 | "Jump to the definition behind this call." | `find_declaration` | Needs import/scope resolution. |
@@ -52,7 +52,7 @@ is a line *editor*, not a read tool — for reading use `Read` / `sed` / `cat`.)
 
 Rule of thumb: **reach for Serena only for symbol resolution, reference/impl
 graphs, and diagnostics (Class A). For text search, line-range reads, listing,
-and file-finding, the existing grep/sed/ed/native path wins — those are exactly
+and file-finding, the existing grep/sed/awk/native path wins — those are exactly
 the operations that do *not* conflict, so keep them where they are.**
 
 ## Prerequisites
