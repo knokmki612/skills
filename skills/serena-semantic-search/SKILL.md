@@ -32,16 +32,23 @@ resolves these; regex/line tools structurally cannot reproduce them.
 | "Outline this file's classes & methods." | `get_symbols_overview` | No structural outline from text. |
 | "What does the compiler/linter flag here?" | `get_diagnostics_for_file` / `get_diagnostics_for_symbol` | Pure LSP — impossible from text. |
 
-**Class B — text-equivalent → stay on grep/sed/ed/native, don't route through Serena.**
-These duplicate tools you already have; going through the MCP server only adds a
-round-trip with zero semantic gain.
+**Class B — text-equivalent → stay on your native search/read/list/find tools,
+don't route through Serena.** These duplicate tools you already have; going
+through the MCP server only adds a round-trip with zero semantic gain. The native
+column lists representative tools, not a closed set.
 
-| Task | Serena tool (avoid) | Use instead |
+| Task | Serena tool (avoid) | Use instead (e.g.) |
 | --- | --- | --- |
 | Regex / substring search across files | `search_for_pattern` | `Grep` (ripgrep) / `git grep` |
 | Read a file or a line range | `read_file` | `Read` / `sed -n 'A,Bp'` / `cat` |
 | List a directory | `list_dir` | `ls` / `Glob` |
 | Find files by name/glob | `find_file` | `find` / `fd` / `Glob` |
+
+Beyond Class B, some reads have **no Serena tool at all** — they were never a
+conflict, so they always stay native: field/column extraction and read-time
+aggregation (`awk` / `cut`), and structured-format reads (`jq` for JSON, `yq` for
+YAML). Serena cannot parse these semantically, so don't reach for it here. (`ed`
+is a line *editor*, not a read tool — for reading use `Read` / `sed` / `cat`.)
 
 Rule of thumb: **reach for Serena only for symbol resolution, reference/impl
 graphs, and diagnostics (Class A). For text search, line-range reads, listing,

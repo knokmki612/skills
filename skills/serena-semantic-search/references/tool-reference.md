@@ -25,12 +25,13 @@ These are the reason to use Serena. A regex or line tool cannot reproduce them.
 | `get_diagnostics_for_file` | Compiler/linter diagnostics for a file, grouped by severity. | Pure LSP — impossible from text tools (`min_severity`, line range). |
 | `get_diagnostics_for_symbol` | Diagnostics for one symbol (optionally its referencers). | `check_symbol_references`, `min_severity`. |
 
-### Class B — text-equivalent (duplicates grep/sed/ed/native — avoid routing through Serena)
+### Class B — text-equivalent (duplicates native search/read/list/find — avoid routing through Serena)
 
 Enabled, but they overlap tools you already have. Going through the MCP server
-adds a round-trip with no semantic gain, so prefer the native column.
+adds a round-trip with no semantic gain, so prefer the native column. The native
+column is representative, not exhaustive.
 
-| Serena tool | Overlaps | Prefer instead |
+| Serena tool | Overlaps | Prefer instead (e.g.) |
 | --- | --- | --- |
 | `search_for_pattern` | regex/substring search | `Grep` (ripgrep) / `git grep` |
 | `read_file` | reading a file or line range | `Read` / `sed -n 'A,Bp'` / `cat` |
@@ -40,6 +41,19 @@ adds a round-trip with no semantic gain, so prefer the native column.
 The one time Class B earns its keep: you need to search/read *inside the activated
 project's ignore-aware view* and you're already in a Serena turn — otherwise the
 native tools are lighter.
+
+### Reads with no Serena counterpart (always native)
+
+These never conflicted with Serena because it has no tool for them — keep them on
+the standard utilities:
+
+- **Field / column extraction, read-time aggregation** → `awk`, `cut` (Serena
+  returns whole lines/symbols, not parsed columns or computed values).
+- **Structured-format reads** → `jq` (JSON), `yq` (YAML). Serena's symbol tools
+  are LSP/code-oriented and do not parse config documents semantically.
+
+Note `ed` is a line *editor*, not a read tool; for reading prefer `Read` / `sed`
+/ `cat`. Within this read-only skill, editing is out of scope entirely.
 
 ### Project & memory (read side)
 
