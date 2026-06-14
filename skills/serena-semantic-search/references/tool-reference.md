@@ -6,26 +6,40 @@ lookup comes back empty.
 
 ## Read-only tool catalog
 
-These are the Serena tools that stay enabled under the read-only config. Names
-follow `oraios/serena`; if a call 404s the upstream tool may have been renamed —
+These are the Serena read tools that stay enabled under the read-only config.
+Names are verified against `oraios/serena` `src/serena/tools/symbol_tools.py` and
+`file_tools.py`; if a call 404s the upstream tool may have been renamed —
 cross-check against the `excluded_tools` list in the dotfiles `serena_config.yml`.
 
-### Symbol navigation (language-server backed)
+### Class A — semantic (language-server backed, no grep/sed/ed equivalent)
+
+These are the reason to use Serena. A regex or line tool cannot reproduce them.
 
 | Tool | What it answers | Notes |
 | --- | --- | --- |
-| `find_symbol` | Locate a symbol by name path (`Class/method`, `module.func`). | Set `include_body` to get the source of just that symbol. Use `depth` to also pull children (e.g. a class's methods). Supports `substring_matching` for fuzzy names. |
-| `get_symbols_overview` | The top-level symbol skeleton of a file or directory. | Best first move on an unfamiliar file — cheaper than reading it whole. |
-| `find_referencing_symbols` | Every place a given symbol is used. | The semantic answer to "who calls this?" — far more reliable than grepping the name. |
+| `find_symbol` | Locate a symbol by name path (`Class/method`, `module.func`). | `include_body` returns just that symbol's source; `depth` pulls children (a class's methods); `substring_matching` for fuzzy names; `relative_path` scopes the search. |
+| `find_declaration` | The declaration/definition behind a usage. | Resolves through imports/scope — go-to-definition, not text match. |
+| `find_implementations` | Symbols that implement/override a given one. | Type-hierarchy query (`include_info` for extra detail). |
+| `find_referencing_symbols` | Every place a symbol is used. | The semantic "who calls this?" — far more reliable than grepping the name; skips comments, strings, and namesakes. |
+| `get_symbols_overview` | The top-level symbol skeleton of a file/dir. | Best first move on an unfamiliar file — cheaper than reading it whole (`depth`, `max_answer_chars`). |
+| `get_diagnostics_for_file` | Compiler/linter diagnostics for a file, grouped by severity. | Pure LSP — impossible from text tools (`min_severity`, line range). |
+| `get_diagnostics_for_symbol` | Diagnostics for one symbol (optionally its referencers). | `check_symbol_references`, `min_severity`. |
 
-### Pattern & file access (no LSP required)
+### Class B — text-equivalent (duplicates grep/sed/ed/native — avoid routing through Serena)
 
-| Tool | What it answers | Notes |
+Enabled, but they overlap tools you already have. Going through the MCP server
+adds a round-trip with no semantic gain, so prefer the native column.
+
+| Serena tool | Overlaps | Prefer instead |
 | --- | --- | --- |
-| `search_for_pattern` | Regex across the codebase. | The fallback when a language isn't LSP-supported, or when you're searching for text rather than a resolved symbol. Supports include/exclude globs and context lines. |
-| `list_dir` | Directory contents. | Honors project gitignore; good for orienting in a repo. |
-| `find_file` | Files matching a name/glob. | |
-| `read_file` | Raw file contents. | Equivalent to the host `Read`; prefer `get_symbols_overview` first to avoid pulling a whole file. |
+| `search_for_pattern` | regex/substring search | `Grep` (ripgrep) / `git grep` |
+| `read_file` | reading a file or line range | `Read` / `sed -n 'A,Bp'` / `cat` |
+| `list_dir` | directory listing | `ls` / `Glob` |
+| `find_file` | file-name/glob search | `find` / `fd` / `Glob` |
+
+The one time Class B earns its keep: you need to search/read *inside the activated
+project's ignore-aware view* and you're already in a Serena turn — otherwise the
+native tools are lighter.
 
 ### Project & memory (read side)
 

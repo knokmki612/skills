@@ -1,6 +1,6 @@
 ---
 name: serena-semantic-search
-description: Use Serena's semantic, symbol-level read tools (find_symbol, get_symbols_overview, find_referencing_symbols, search_for_pattern) as a smarter, more token-efficient alternative to plain grep/ripgrep and reading whole files. Use when searching a codebase, locating where a symbol is defined or used, mapping a file's structure, tracing call sites, or understanding code relationships — and when the Serena MCP server is available.
+description: Use Serena's semantic, symbol-level read tools (find_symbol, find_declaration, find_implementations, find_referencing_symbols, get_symbols_overview, get_diagnostics_for_file) as a smarter, more token-efficient alternative to plain grep/ripgrep and reading whole files. Use when locating where a symbol is defined or used, finding implementations, mapping a file's structure, tracing call sites, surfacing compiler/LSP diagnostics, or understanding code relationships — and when the Serena MCP server is available. For plain text search, line-range reads, directory listing, and file-finding, prefer the existing grep/sed/Read tools instead.
 license: CC-BY-4.0
 ---
 
@@ -15,19 +15,38 @@ When the `serena` MCP server is available, its language-server-backed read tools
 
 In this setup Serena is configured **read-only** (all write/edit tools are disabled at the config level). Treat it as a query engine: reach for it to *read and locate* code, never to *change* it.
 
-## Reach for Serena vs. plain grep/Read
+## Serena's read tools split into two classes
 
-| Intent | Use |
-| --- | --- |
-| "Where is `Foo` / `Foo.bar` defined?" | `find_symbol` |
-| "Who calls / references `Foo.bar`?" | `find_referencing_symbols` |
-| "What's in this file / what are its classes & methods?" | `get_symbols_overview` |
-| "Show me the body of just this one method" | `find_symbol` with `include_body` on that symbol |
-| Regex / substring across code (no symbol resolution needed) | `search_for_pattern` (Serena) or `Grep` |
-| Plain-text search: logs, docs, config, comments, commit messages | `Grep` / `Bash` (Serena gives no edge here) |
-| You already know the file and need its literal contents | `Read` (or Serena `read_file`) |
+Serena's read-only tools partition cleanly by whether `grep`/`sed`/`ed`/`Read`
+can already do the job. Only the first class is the reason to use Serena.
 
-Rule of thumb: **if the question is about a symbol or a code relationship, start with Serena; if it's about raw text, use Grep.**
+**Class A — semantic, no text-tool equivalent → use Serena.** A language server
+resolves these; regex/line tools structurally cannot reproduce them.
+
+| Intent | Tool | Why grep/sed/ed can't |
+| --- | --- | --- |
+| "Where is `Foo` / `Foo.bar` defined?" | `find_symbol` (add `include_body` for the source) | grep matches the *text* `Foo`, not the resolved symbol (misses re-exports, picks up comments/strings/namesakes). |
+| "Jump to the definition behind this call." | `find_declaration` | Needs import/scope resolution. |
+| "What implements this interface / overrides this method?" | `find_implementations` | Type-hierarchy knowledge. |
+| "Who calls / references `Foo.bar`?" | `find_referencing_symbols` | grep finds the name string, not true references. |
+| "Outline this file's classes & methods." | `get_symbols_overview` | No structural outline from text. |
+| "What does the compiler/linter flag here?" | `get_diagnostics_for_file` / `get_diagnostics_for_symbol` | Pure LSP — impossible from text. |
+
+**Class B — text-equivalent → stay on grep/sed/ed/native, don't route through Serena.**
+These duplicate tools you already have; going through the MCP server only adds a
+round-trip with zero semantic gain.
+
+| Task | Serena tool (avoid) | Use instead |
+| --- | --- | --- |
+| Regex / substring search across files | `search_for_pattern` | `Grep` (ripgrep) / `git grep` |
+| Read a file or a line range | `read_file` | `Read` / `sed -n 'A,Bp'` / `cat` |
+| List a directory | `list_dir` | `ls` / `Glob` |
+| Find files by name/glob | `find_file` | `find` / `fd` / `Glob` |
+
+Rule of thumb: **reach for Serena only for symbol resolution, reference/impl
+graphs, and diagnostics (Class A). For text search, line-range reads, listing,
+and file-finding, the existing grep/sed/ed/native path wins — those are exactly
+the operations that do *not* conflict, so keep them where they are.**
 
 ## Prerequisites
 
