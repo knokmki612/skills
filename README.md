@@ -11,6 +11,7 @@ Each skill lives in its own directory under `skills/`, anchored by a `SKILL.md` 
 | [design-review](skills/design-review/) | Evaluate a design or refactoring decision problem-first — establish the real, observed problem before any principle or pattern (SOLID, DRY, GoF) is named, so the review solves a problem instead of forcing code into a pattern. |
 | [safety-deletion](skills/safety-deletion/) | Route every deletion inside a git-managed working tree through `git rm` / `git clean` instead of destructive commands (`rm`, `rmdir`, `shred`, …), keeping deletions recoverable through git history and the reflog. |
 | [serena-semantic-search](skills/serena-semantic-search/) | Use Serena's semantic, symbol-level read tools as a smarter, more token-efficient alternative to plain grep and reading whole files when searching, navigating, and understanding a codebase. |
+| [wip-commit-organization](skills/wip-commit-organization/) | Reorganize a messy stack of work-in-progress commits into a clean, reviewable history without losing the working diff — analyze the commits a branch adds over its base, propose a reconstruction plan, get approval, rebuild, then mechanically verify the final tree is byte-for-byte identical. |
 
 ## Installation
 
