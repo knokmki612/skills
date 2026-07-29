@@ -8,6 +8,7 @@ Each skill lives in its own directory under `skills/`, anchored by a `SKILL.md` 
 
 | Skill | Description |
 | --- | --- |
+| [comment-pruning](skills/comment-pruning/) | Prune comments and developer docs that narrate development history already recorded in git — classify every annotation (keep / rewrite / relocate / delete), guarantee the information survives in at least one durable place, and verify behavior is unchanged, keeping only annotations that help a reader understand the current code. |
 | [design-review](skills/design-review/) | Evaluate a design or refactoring decision problem-first — establish the real, observed problem before any principle or pattern (SOLID, DRY, GoF) is named, so the review solves a problem instead of forcing code into a pattern. |
 | [safety-deletion](skills/safety-deletion/) | Route every deletion inside a git-managed working tree through `git rm` / `git clean` instead of destructive commands (`rm`, `rmdir`, `shred`, …), keeping deletions recoverable through git history and the reflog. |
 | [serena-semantic-search](skills/serena-semantic-search/) | When about to grep an identifier to find its definition, references, or call sites — or read a whole file just to map its structure — use Serena's language-server-backed read tools instead: more accurate and more token-efficient than text search. |
