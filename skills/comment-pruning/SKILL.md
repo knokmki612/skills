@@ -44,6 +44,11 @@ Out of scope — never prune:
 When one file mixes both (front matter + published body), only the
 developer-addressed parts are candidates.
 
+Boundary with `docs-restructuring`: this skill fixes what fits inside the
+existing structure. When the structure itself has failed — headings that no
+longer predict content, sections answering several reader questions at once —
+run the `docs-restructuring` skill first, then prune.
+
 ## Execution model
 
 Two phases separated by an approval gate. Never merge them.
@@ -112,7 +117,8 @@ approval**. Do not edit anything in Phase 1.
 - Confirmation that the diff was annotation-only, checks passed, and (where
   applicable) build output was byte-identical.
 - **Out-of-scope observations** — candidate file deletions, suspected bugs,
-  code smells exposed while reading. Reported, never acted on here.
+  code smells, structural failures for `docs-restructuring`. Reported, never
+  acted on here.
 
 ## Timing — when to run
 
