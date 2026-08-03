@@ -1,6 +1,6 @@
 ---
 name: comment-pruning
-description: Prune comments and developer docs that narrate development history — decision provenance, migration notes, "previously X, now Y" — whose information git history already records, keeping only annotations that help a reader understand the current code (guards, pitfalls, conventions, usage). Classify every annotation (keep / rewrite / relocate / delete), guarantee the information survives in at least one durable place, and verify behavior is unchanged with an annotation-only diff plus the project's format/lint/test checks. Use when comments have piled up over iterations of agent or human work, when a file reads like a changelog, after a multi-round change settles and before finalizing a PR, or when asked to clean up, tidy, prune, or organize comments or documentation.
+description: Prune comments and developer docs that no longer earn their reading cost — history narration git already records, references drifted from the code they point at, restatements of facts that tests or schemas enforce, and blocks that overload the reader. Classify every annotation (keep / rewrite / relocate / delete), reshape overloaded units to per-unit load budgets, guarantee the information survives in at least one durable place, and verify behavior is unchanged with an annotation-only diff plus the project's format/lint/test checks. Use when comments have piled up over iterations of agent or human work, when a file reads like a changelog, when docs have grown too long to read, after a multi-round change settles and before finalizing a PR, or when asked to clean up, tidy, prune, or organize comments or documentation.
 license: CC-BY-4.0
 ---
 
@@ -13,7 +13,11 @@ comments: each decision, review response, and migration felt worth recording at
 the moment it was made. But git log, blame, and PRs already record history. A
 comment's job is to help the reader of the **current** code; judge it by
 "reader's effort saved at that spot" vs "noise + drift cost". A comment that
-retells a story git already tells fails that test on both sides.
+retells a story git already tells fails that test on both sides. So does one
+that points at code that has since moved, and — less obviously — a block whose
+every fact is individually justified but whose aggregate exceeds what a reader
+can hold: volume is a defect in itself, so budgets apply per reading unit, not
+only per fact.
 
 Deleting text is cheap; destroying information is not. The invariant this skill
 protects is that **every piece of information survives in at least one durable
@@ -40,6 +44,11 @@ Out of scope — never prune:
 When one file mixes both (front matter + published body), only the
 developer-addressed parts are candidates.
 
+Boundary with `docs-restructuring`: this skill fixes what fits inside the
+existing structure. When the structure itself has failed — headings that no
+longer predict content, sections answering several reader questions at once —
+run the `docs-restructuring` skill first, then prune.
+
 ## Execution model
 
 Two phases separated by an approval gate. Never merge them.
@@ -60,9 +69,15 @@ Give every annotation in scope exactly one verdict:
 | Verdict | Criterion | Action |
 | --- | --- | --- |
 | **KEEP** | A guard: a point that would puzzle a reader of the implementation, a DO-NOT / pitfall, a rationale that cannot be read off types, signatures, or nearby code. A convention stated once at its enforcement point. A heading line over a non-trivial block. | None. |
-| **REWRITE** | A living fact wrapped in historical narration — "since #618 we now use X" carries a real rule inside a story. | State the fact in present tense; drop the story. |
+| **REWRITE** | A living fact wrapped in historical narration ("since #123 we now use X"); a reference pointing at code that moved or was renamed; a block or list packing more facts than a reader can hold. | State the fact in present tense; fix the pointer onto a stable anchor; split, regroup, or pointer-ize down to one concern per unit. |
 | **RELOCATE** | Rationale that still matters to design or usage but belongs in docs (README, architecture notes) and is not yet there. | Move it to the right doc, then delete it here. |
 | **DELETE** | History or provenance git already records; a paraphrase of the adjacent code; a leaf-level echo of a convention stated elsewhere; commented-out code. | Delete. |
+
+**Load budgets.** One annotation = one concern. Comment blocks stay within
+~4 lines unless a guard genuinely needs more; doc lists stay within ~5 sibling
+bullets, regrouped by reader intent (understand / not break / do / look up)
+when they grow past that; facts already enforced by tests, schemas, or lint
+rules become one-line pointers to the enforcement point, never restatements.
 
 **The provenance test.** Before marking a history comment DELETE, confirm the
 story is actually recoverable — `git log --follow -p -- <file>`, `git blame`,
@@ -71,9 +86,9 @@ comment is its sole record) **and it still matters**, the verdict is RELOCATE �
 or record it in the pruning commit's message body, which turns the deletion
 itself into the durable record.
 
-Detailed signals, worked examples, and edge cases (TODOs, commented-out code,
-doc comments consumed by tooling): see
-[references/classification.md](references/classification.md).
+Detailed signals (narration, drift, volatile anchors), load budgets, worked
+examples, and edge cases (TODOs, commented-out code, doc comments consumed by
+tooling): see [references/classification.md](references/classification.md).
 
 Present the plan as a table — `file:line`, the annotation (truncated), verdict,
 and *where the information lives afterwards* — then **stop and ask for
@@ -101,6 +116,9 @@ approval**. Do not edit anything in Phase 1.
 - Where each RELOCATE landed.
 - Confirmation that the diff was annotation-only, checks passed, and (where
   applicable) build output was byte-identical.
+- **Out-of-scope observations** — candidate file deletions, suspected bugs,
+  code smells, structural failures for `docs-restructuring`. Reported, never
+  acted on here.
 
 ## Timing — when to run
 
