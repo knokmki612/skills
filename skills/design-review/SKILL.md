@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: Evaluate a design or refactoring decision problem-first, treating design principles and patterns (SOLID, DRY, GoF patterns, etc.) as after-the-fact tools rather than goals to reach. Use when reviewing a design, judging whether to apply or invoke a principle/pattern, deciding whether code "should" be refactored, or whenever a review risks forcing code into a pattern for its own sake. Guards against pattern-fitting that drifts from the actual problem.
+description: Evaluate a design or refactoring decision problem-first, treating design principles and patterns (SOLID, DRY, GoF patterns, etc.) as after-the-fact tools rather than goals to reach. Use when reviewing a design, judging whether to apply or invoke a principle/pattern, deciding whether code "should" be refactored, planning a refactoring (what it keeps needs the same scrutiny as what it changes), or whenever a review risks forcing code into a pattern for its own sake. Guards against pattern-fitting that drifts from the actual problem.
 license: CC-BY-4.0
 ---
 
@@ -90,6 +90,19 @@ With a real problem (Step 2) and its concrete pain (Step 3) fixed, look for a fi
   explicitly. The bar to clear: a rename, a helper function, a comment, inlining,
   deleting code, or moving one thing — a pattern must beat the simplest option that
   addresses the same pain, not just be *applicable*.
+- **Look at how the surrounding code already does it** before proposing anything
+  written from scratch. An existing helper or convention at sibling call sites is
+  the first candidate; a fresh loop or branch has to beat it.
+- **Inventory what the plan keeps.** A refactoring preserves behavior, including
+  behavior with no reason to exist: a dead parameter, a fallback arm that never
+  fires, a rule nobody asked for. List each condition, parameter, or branch the plan
+  carries forward unchanged, and for each either show it is live (callers,
+  fixtures, sibling call sites) or mark it a **requirement question** for the
+  user. Whether a rule *should* exist is not readable from the code, so an
+  unexplained shape is a question, not something to preserve silently.
+- **Tag every claim with its evidence.** A finding checked against the code says
+  where (`checked: path:line`); one that merely sounds right says so
+  (`inferred`). Never write the second in the voice of the first.
 - When you need to confirm what a principle or pattern *actually means* (definitions
   are easy to misremember and misapply), consult
   [references/principles.md](references/principles.md). Open it to **verify a
@@ -117,6 +130,9 @@ Before finalizing, scan your own reasoning for these tells that the order slippe
 - The recommendation adds a layer, interface, or indirection whose flexibility is
   not exercised by any current requirement.
 - The review restated a "smell" as if the smell itself were the problem.
+- The plan keeps a condition, parameter, or branch that nothing has been shown to
+  exercise, and did not raise it as a requirement question.
+- An `inferred` claim is worded as if it had been checked.
 
 Any hit → return to the step where the slip happened.
 
@@ -126,7 +142,11 @@ Any hit → return to the step where the slip happened.
 Problem (plain phenomena):   <what is observably wrong — no principle names>
 Real or hypothetical:        <observed evidence, or demoted via YAGNI>
 Concrete pain:               <symptom + evidence, not a verdict>
-Options considered:          <candidate(s), incl. the simplest alternative>
+Options considered:          <candidate(s), incl. the simplest alternative and how
+                              the surrounding code already does it; each tagged
+                              checked: path:line / inferred>
+Kept unchanged:              <each shape the plan carries forward, with evidence it
+                              is live OR "requirement question: ...">
 Decision:                    <chosen option OR "change nothing">
 Why this over the simpler option: <cost/benefit tied to the concrete pain>
 ```
