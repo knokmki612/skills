@@ -102,7 +102,7 @@ With a real problem (Step 2) and its concrete pain (Step 3) fixed, look for a fi
   unexplained shape is a question, not something to preserve silently.
 - **Tag every claim with its evidence.** A finding checked against the code says
   where (`checked: path:line`); one that merely sounds right says so
-  (`inferred`). Never write the second in the voice of the first.
+  (`inferred`).
 - When you need to confirm what a principle or pattern *actually means* (definitions
   are easy to misremember and misapply), consult
   [references/principles.md](references/principles.md). Open it to **verify a
