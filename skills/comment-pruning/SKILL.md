@@ -51,18 +51,21 @@ run the `docs-restructuring` skill first, then prune.
 
 ## Execution model
 
-Two phases separated by an approval gate. Never merge them.
+Two phases, run in order. Never merge them: Phase 1 writes the
+classification table down before Phase 2 touches anything, and Phase 2
+executes that table and nothing else. The table is reproduced in the report.
 
 ```
-Phase 1  ANALYZE (read-only)  →  classification table  →  ⛔ USER APPROVAL
-Phase 2  EXECUTE  →  VERIFY annotation-only diff + checks  →  report
+Phase 1  ANALYZE (read-only)  →  classification table
+Phase 2  EXECUTE the table  →  VERIFY annotation-only diff + checks  →  report
 ```
 
 ## Phase 1 — Inventory and classify
 
-Fix the scope first, confirming with the user if ambiguous: the current
-branch's touched files (`git diff --name-only <base>..HEAD`), a directory, or
-the whole repo.
+Fix the scope first: the current branch's touched files
+(`git diff --name-only <base>..HEAD`), a directory, or the whole repo. When
+the request leaves it open, take the narrowest reading that covers the
+request and name the chosen scope in the report.
 
 Give every annotation in scope exactly one verdict:
 
@@ -90,14 +93,14 @@ Detailed signals (narration, drift, volatile anchors), load budgets, worked
 examples, and edge cases (TODOs, commented-out code, doc comments consumed by
 tooling): see [references/classification.md](references/classification.md).
 
-Present the plan as a table — `file:line`, the annotation (truncated), verdict,
-and *where the information lives afterwards* — then **stop and ask for
-approval**. Do not edit anything in Phase 1.
+Write the plan down as a table — `file:line`, the annotation (truncated),
+verdict, and *where the information lives afterwards*. Phase 2 executes this
+table and the report reproduces it. Do not edit anything in Phase 1.
 
 ## Phase 2 — Execute and verify
 
-1. **Apply the approved verdicts.** Annotations only — never change code in the
-   same commit. If pruning exposes a code smell, report it; do not fix it here.
+1. **Apply the Phase 1 verdicts.** Annotations only — never change code in
+   the same commit. If pruning exposes a code smell, report it; do not fix it here.
 2. **Annotation-only diff check.** Review `git diff` and confirm every hunk
    touches only comments and developer docs. Where comment syntax can reach
    build output (HTML `<!-- -->` in templates), prove the output is unchanged:
@@ -136,5 +139,5 @@ still moving churns the very comments that are guiding the work.
   git history including the pruning commit's message.
 - Mix behavior changes into a pruning commit.
 - Prune end-user content, license headers, or machine-read directives.
-- Skip the approval gate between Phase 1 and Phase 2.
+- Execute a verdict the Phase 1 table does not carry, or edit during Phase 1.
 - Report success while the diff touches non-annotation lines or checks fail.

@@ -47,11 +47,13 @@ Out of scope:
 
 ## Execution model
 
-Two phases separated by an approval gate. Never merge them.
+Two phases, run in order. Never merge them: Phase 1 writes the target tree
+and move map down before Phase 2 touches anything, and Phase 2 executes that
+map and nothing else. The map is reproduced in the report.
 
 ```
-Phase 1  ANALYZE (read-only)  →  target tree + move map  →  ⛔ USER APPROVAL
-Phase 2  EXECUTE (move verbatim)  →  VERIFY move map + links  →  report
+Phase 1  ANALYZE (read-only)  →  target tree + move map
+Phase 2  EXECUTE the map (move verbatim)  →  VERIFY move map + links  →  report
 ```
 
 ## Phase 1 — Inventory and design
@@ -69,7 +71,8 @@ Phase 2  EXECUTE (move verbatim)  →  VERIFY move map + links  →  report
    [references/intent-model.md](references/intent-model.md) (intent-pure
    sections, heading depth ≤ 3, sibling budgets, entry-point README).
 
-Present the plan in this fixed format, then **stop for approval**:
+Write the plan down in this fixed format; Phase 2 executes it and the report
+reproduces it:
 
 ```
 CURRENT TREE (with line counts)      TARGET TREE
@@ -87,7 +90,7 @@ Handed to comment-pruning afterwards: <sections needing per-unit tightening>
    lines and one-sentence pointers. Resist every temptation to "improve"
    sentences in passing — flag them for the pruning pass instead.
 2. **Verify the move map** ⛔ completion gate: every heading and passage of
-   the old document has a destination that matches the approved map. Nothing
+   the old document has a destination that matches the Phase 1 map. Nothing
    is dropped that the map did not explicitly retire.
 3. **Verify inbound links.** Search the whole repo — docs, code comments,
    templates, config — for the old paths and anchors and update them.
@@ -119,10 +122,10 @@ Routine tidying after a settled change is `comment-pruning`, not this.
 
 ## Never
 
-- Drop a passage the approved move map did not explicitly retire.
+- Drop a passage the Phase 1 move map did not explicitly retire.
 - Rewrite prose while moving it — moves stay verbatim; tightening belongs to
   `comment-pruning`.
 - Mix code changes, or content rewrites, into a restructuring commit.
 - Leave an inbound link pointing at a heading or file that no longer exists.
 - Restructure end-user content or generated docs.
-- Skip the approval gate between Phase 1 and Phase 2.
+- Execute a move the Phase 1 map does not carry, or edit during Phase 1.
