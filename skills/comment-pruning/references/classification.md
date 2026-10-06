@@ -55,6 +55,29 @@ fixable as an annotation-only REWRITE: update the pointer.
   since changed: fix the pointer *and* flag the divergence in the report —
   whether the code disagreement is a bug is outside annotation-only scope.
 
+## Signals of working notes and superseded drafts
+
+A document written over a session accumulates process text: notes the writer
+left for themselves, the trail from draft to conclusion, options that were
+never decided between. Each marks a passage to classify deliberately:
+
+- Notes to self: "revisit later", "to be confirmed", "draft", "tentative",
+  「後で見直す」「要確認」「暫定」「検討中」.
+- Trails: "at first A, then B", "changed to", "update:", "addendum:",
+  「追記:」「変更:」「〜に変更しました」; a revision-history section inside a
+  document that is not a changelog.
+- Options left side by side: "plan A / plan B" with no choice stated,
+  「旧案」, "alternatively…", struck-through text kept next to its replacement.
+- Chat voice: "as discussed", "per your request", "I have updated",
+  「以下のとおり修正しました」 — a message to the requester, written into the
+  document.
+
+A rejected alternative earns its place only where the document exists to
+record the decision (an ADR, a design review): there it is stated as a
+comparison — the choice, the alternative, the reason — never as a trail.
+Everywhere else it moves to the commit message, the PR description, or the
+hand-over report.
+
 ## Load budgets — when every fact is justified but the whole is unreadable
 
 Each annotation can pass the keep-test individually while the aggregate
@@ -149,6 +172,29 @@ rest:
 // behavior: README §Articles). Failures throw and fail the build; zero items
 // is a valid empty list.
 ```
+
+### REWRITE — a conclusion stated as a trail (deliverable)
+
+> 当初はキャッシュ TTL を本番・開発とも 1 時間としていたが、レビューで
+> webhook 起点のデプロイが古い内容を見る問題が指摘されたため、本番のみ
+> 1 秒に変更した。
+
+The reader of the report needs the state and its reason, not the path. The
+path is the conversation's record:
+
+> 本番のキャッシュ TTL は 1 秒、開発は 1 時間とする。webhook 起点のデプロイ
+> が常に最新の内容を取得する必要があるため。
+
+### DELETE — a working note left in a deliverable
+
+> ## 移行手順
+>
+> （この節は要確認。手順 3 は暫定で、後で見直す。）
+>
+> 1. …
+
+The note addressed the writer, not the reader. If step 3 is still open, the
+hand-over report says so; the document states the steps as they stand.
 
 ### KEEP — a guard that cannot be read off the code
 
