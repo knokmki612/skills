@@ -219,6 +219,8 @@ at most a pointer if the spot is a genuine pitfall, and delete the rest.
 
 ## Edge cases
 
+### By kind of annotation
+
 - **TODO / FIXME.** Keep if still actionable and accurate. If stale or big
   enough to deserve tracking, convert to an issue and delete the comment
   (the issue link goes in the pruning commit message).
@@ -231,10 +233,16 @@ at most a pointer if the spot is a genuine pitfall, and delete the rest.
 - **Comments citing external URLs** (vendor docs, specs): keep when the URL is
   load-bearing for a guard; delete when it decorated a narration that is being
   deleted anyway.
+
+### By kind of file
+
 - **Generated files**: never hand-edit; fix the generator or skip.
 - **Config files with sparse comment support** (JSON via `.jsonc`, YAML): same
   rubric; be extra careful that the parser accepts the file after edits — run
   the project's checks as always.
+
+### Judgment calls
+
 - **A comment that is wrong about behavior.** A drifted *pointer* is a
   REWRITE (fix the reference). But a comment asserting something false about
   what the code *does* is a bug, not a pruning question — flag it in the

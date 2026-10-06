@@ -120,21 +120,32 @@ State the decision and the reason, tied back to the Step 3 pain.
 
 ## Anti-pattern self-check
 
-Before finalizing, scan your own reasoning for these tells that the order slipped:
+Before finalizing, scan your own reasoning for these tells that the order
+slipped. Each is listed under the step it slipped at; any hit → return to that
+step.
+
+**Step 1 — the problem**
 
 - A principle/pattern name appears **before** a concrete problem is stated.
+- The review restated a "smell" as if the smell itself were the problem.
+
+**Step 2 — real or hypothetical**
+
+- The driving problem is hypothetical ("we might need…") with no evidence.
+
+**Step 3 — the pain**
+
 - The justification is "best practice" / "cleaner" / "more maintainable" with no
   named pain behind it.
-- The driving problem is hypothetical ("we might need…") with no evidence.
+
+**Step 4 — the options**
+
 - No simpler alternative was considered, or it was dismissed without comparison.
 - The recommendation adds a layer, interface, or indirection whose flexibility is
   not exercised by any current requirement.
-- The review restated a "smell" as if the smell itself were the problem.
 - The plan keeps a condition, parameter, or branch that nothing has been shown to
   exercise, and did not raise it as a requirement question.
 - An `inferred` claim is worded as if it had been checked.
-
-Any hit → return to the step where the slip happened.
 
 ## Output format
 
