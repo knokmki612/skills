@@ -1,6 +1,6 @@
 ---
 name: wip-commit-organization
-description: Reorganize a messy stack of work-in-progress commits into a clean, reviewable history without ever losing the working diff. Analyze the commits a branch adds over its base, propose a reconstruction plan (order, granularity, messages), get approval, then rebuild the history and mechanically verify the final tree is byte-for-byte identical. Use after piling up commits — literal `wip` commits, `fixup`, `.`, "address review", or any ad-hoc checkpoint — when squashing, splitting, reordering, or rewording branch history, or tidying commits before opening or updating a PR.
+description: Reorganize a messy stack of work-in-progress commits into a clean, reviewable history without ever losing the working diff. Analyze the commits a branch adds over its base, write down a reconstruction plan (order, granularity, messages), then rebuild the history against it and mechanically verify the final tree is byte-for-byte identical. Use after piling up commits — literal `wip` commits, `fixup`, `.`, "address review", or any ad-hoc checkpoint — when squashing, splitting, reordering, or rewording branch history, or tidying commits before opening or updating a PR.
 license: CC-BY-4.0
 ---
 
@@ -17,8 +17,8 @@ Rewriting history is destructive. `rebase`, `reset`, and `commit --amend` move r
 and can silently drop hunks. The one guarantee worth protecting above all else is
 that **the final working tree does not change** — you are re-cutting the *path* from
 base to tip, never the *destination*. This skill enforces that with an explicit
-backup and a mechanical end-state check, and it puts every irreversible operation
-behind a single approval gate.
+backup and a mechanical end-state check, and it keeps every irreversible
+operation out of the analysis phase.
 
 ## Scope — what gets reorganized
 
@@ -42,15 +42,17 @@ git log --oneline <base>..HEAD       # this exact set is what gets reorganized
 
 ## Execution model
 
-Two phases separated by an approval gate. Never merge them.
+Two phases, run in order. Never merge them: Phase 1 writes the reconstruction
+plan down before Phase 2 touches a ref, and Phase 2 rebuilds against that plan
+and nothing else. The plan is reproduced in the report.
 
 ```
-Phase 1  ANALYZE  →  present reconstruction plan  →  ⛔ USER APPROVAL
-Phase 2  EXECUTE  →  rebuild history  →  VERIFY end-state  →  report
+Phase 1  ANALYZE  →  write down reconstruction plan
+Phase 2  EXECUTE the plan  →  rebuild history  →  VERIFY end-state  →  report
 ```
 
-The gate is the safety mechanism, not a formality. Do not run any
-history-rewriting command in Phase 1, and do not start Phase 2 without approval.
+The backup branch and the end-state check are the safety mechanism. Do not
+run any history-rewriting command in Phase 1.
 
 ## Phase 0 — Preconditions and backup
 
@@ -108,8 +110,10 @@ Notes:
 - <anything that can't build/test standalone, if unavoidable>
 ```
 
-Then **stop and ask for approval.** Do not proceed until the user accepts or edits
-the plan.
+Phase 2 executes this plan as written; the report reproduces it. If the plan
+calls for rewriting history that is already pushed, the confirmation in
+[Already-pushed history](#already-pushed-history) still applies before the
+force push, not before Phase 2.
 
 ## Phase 2 — Execute
 
@@ -179,7 +183,7 @@ git diff backup/wip-<timestamp> HEAD           # MUST print nothing
 Also sanity-check the shape:
 
 ```bash
-git log --oneline <base>..HEAD                 # matches the approved plan
+git log --oneline <base>..HEAD                 # matches the Phase 1 plan
 git rebase -i --exec "<test cmd>" <base>        # if buildability was promised
 ```
 
@@ -234,8 +238,7 @@ context, delegate **Phase 1 only** to a read-only subagent (`context: fork`):
   the exact format above.
 - It must **not** run `rebase`, `reset`, `commit`, or any ref-moving command.
 
-Keep the backup, approval gate, execution, and end-state verification in the main
-skill flow — never behind the subagent, where a failure would be invisible and
+Keep the backup, execution, and end-state verification in the main skill flow — never behind the subagent, where a failure would be invisible and
 recovery couldn't be driven. Calling the subagent is optional; the skill is complete
 without it.
 
@@ -254,7 +257,8 @@ linear stack or the rewrite hits trouble:
 ## Never
 
 - Rewrite history without a backup branch and a recorded original SHA.
-- Skip the approval gate between Phase 1 and Phase 2.
+- Run a rewriting command before the Phase 1 plan is written down, or rebuild
+  against a plan other than the one written down.
 - Report success while `git diff backup/... HEAD` is non-empty.
 - Delegate a history-rewriting command to a subagent.
 - Force-push a shared branch without the user's explicit confirmation.
