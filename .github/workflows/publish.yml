@@ -67,15 +67,20 @@ jobs:
             exit 1
           fi
 
-      # Pin the tag to the commit the validate job checked, so the release
-      # cannot drift to a newer main head between validation and publish.
-      - name: Tag the validated commit
-        run: |
-          gh api "repos/$GITHUB_REPOSITORY/git/refs" --method POST \
-            -f "ref=refs/tags/$TAG" -f "sha=$GITHUB_SHA"
-
+      # gh skill publish creates the tag itself and refuses one that already
+      # exists, so nothing tags beforehand. The check after it catches a main
+      # that moved between validation and publish.
       - name: gh skill publish
         run: gh skill publish --tag "$TAG"
+
+      - name: Verify the release tag points at the validated commit
+        run: |
+          git fetch -q origin "refs/tags/$TAG:refs/tags/$TAG"
+          sha=$(git rev-parse "$TAG^{commit}")
+          if [ "$sha" != "$GITHUB_SHA" ]; then
+            echo "::error::$TAG points at $sha, not at the validated commit $GITHUB_SHA. main moved during the run, so this release was not validated by this run."
+            exit 1
+          fi
 
       - name: Check the agent-skills discovery topic
         run: |
