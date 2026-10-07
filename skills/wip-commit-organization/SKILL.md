@@ -112,8 +112,8 @@ Notes:
 
 Phase 2 executes this plan as written; the report reproduces it. If the plan
 calls for rewriting history that is already pushed, the confirmation in
-[Already-pushed history](#already-pushed-history) still applies before the
-force push, not before Phase 2.
+[Already-pushed history](#already-pushed-history) applies before the force
+push.
 
 ## Phase 2 — Execute
 

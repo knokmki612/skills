@@ -28,12 +28,12 @@ run the provenance test and check for a living fact inside — but it is the
 trigger to classify deliberately:
 
 - Past tense about the codebase itself: "was", "used to", "previously",
-  "moved from", "renamed from", "以前は", "従来は", "〜に伴い", "〜を廃止".
+  "moved from", "renamed from", "retired", "following the change to".
 - Issue/PR numbers or dates used as narrative anchors: "since #123", "after
   the redesign". (A PR number *inside a kept guard* as a pointer to deeper
   discussion is fine — a pointer is not narration.)
 - Change-request framing: "per review feedback", "as discussed", "the owner
-  decided", "エージェントの判断で".
+  decided", "at the agent's discretion".
 - Before/after comparisons whose "before" no longer exists in the tree.
 - Apologies and journals: "temporary workaround until…" (check whether "until"
   already happened), "keeping this for now".
@@ -54,6 +54,29 @@ fixable as an annotation-only REWRITE: update the pointer.
 - Cross-file duplication claims ("mirrors the logic in X") where one side has
   since changed: fix the pointer *and* flag the divergence in the report —
   whether the code disagreement is a bug is outside annotation-only scope.
+
+## Signals of working notes and superseded drafts
+
+A document written over a session accumulates process text: notes the writer
+left for themselves, the trail from draft to conclusion, options that were
+never decided between. Each marks a passage to classify deliberately:
+
+- Notes to self: "revisit later", "to be confirmed", "draft", "tentative",
+  "still under consideration".
+- Trails: "at first A, then B", "changed to", "update:", "addendum:", "now
+  updated to"; a revision-history section inside a document that is not a
+  changelog.
+- Options left side by side: "plan A / plan B" with no choice stated, "the
+  earlier proposal", "alternatively…", struck-through text kept next to its
+  replacement.
+- Chat voice: "as discussed", "per your request", "I have updated the
+  following" — a message to the requester, written into the document.
+
+A rejected alternative earns its place only where the document exists to
+record the decision (an ADR, a design review): there it is stated as a
+comparison — the choice, the alternative, the reason — never as a trail.
+Everywhere else it moves to the commit message, the PR description, or the
+hand-over report.
 
 ## Load budgets — when every fact is justified but the whole is unreadable
 
@@ -150,6 +173,29 @@ rest:
 // is a valid empty list.
 ```
 
+### REWRITE — a conclusion stated as a trail (deliverable)
+
+> The cache TTL was initially one hour in both production and development.
+> Review found that webhook-triggered deploys could serve stale content, so
+> production was changed to one second.
+
+The reader of the report needs the state and its reason, not the path. The
+path is the conversation's record:
+
+> Production cache TTL is one second; development is one hour.
+> Webhook-triggered deploys must always fetch fresh content.
+
+### DELETE — a working note left in a deliverable
+
+> ## Migration steps
+>
+> (This section still needs checking. Step 3 is tentative; revisit later.)
+>
+> 1. …
+
+The note addressed the writer, not the reader. If step 3 is still open, the
+hand-over report says so; the document states the steps as they stand.
+
 ### KEEP — a guard that cannot be read off the code
 
 ```js
@@ -173,6 +219,8 @@ at most a pointer if the spot is a genuine pitfall, and delete the rest.
 
 ## Edge cases
 
+### By kind of annotation
+
 - **TODO / FIXME.** Keep if still actionable and accurate. If stale or big
   enough to deserve tracking, convert to an issue and delete the comment
   (the issue link goes in the pruning commit message).
@@ -185,10 +233,16 @@ at most a pointer if the spot is a genuine pitfall, and delete the rest.
 - **Comments citing external URLs** (vendor docs, specs): keep when the URL is
   load-bearing for a guard; delete when it decorated a narration that is being
   deleted anyway.
+
+### By kind of file
+
 - **Generated files**: never hand-edit; fix the generator or skip.
 - **Config files with sparse comment support** (JSON via `.jsonc`, YAML): same
   rubric; be extra careful that the parser accepts the file after edits — run
   the project's checks as always.
+
+### Judgment calls
+
 - **A comment that is wrong about behavior.** A drifted *pointer* is a
   REWRITE (fix the reference). But a comment asserting something false about
   what the code *does* is a bug, not a pruning question — flag it in the
