@@ -67,13 +67,6 @@ jobs:
             exit 1
           fi
 
-      # Pin the tag to the commit the validate job checked, so the release
-      # cannot drift to a newer main head between validation and publish.
-      - name: Tag the validated commit
-        run: |
-          gh api "repos/$GITHUB_REPOSITORY/git/refs" --method POST \
-            -f "ref=refs/tags/$TAG" -f "sha=$GITHUB_SHA"
-
       - name: gh skill publish
         run: gh skill publish --tag "$TAG"
 
