@@ -30,6 +30,10 @@ gh skill install knokmki612/skills safety-deletion
 
 Once installed, the agent reads the `description` from each `SKILL.md` and invokes the skill automatically when a relevant operation comes up.
 
+## Publishing
+
+Releases are cut by the [Publish skills](.github/workflows/publish.yml) workflow. Every pull request and push to `main` that touches `skills/` runs `gh skill publish --dry-run`, which validates each skill against the Agent Skills specification. To publish, run the workflow manually on `main` with a semver tag (e.g. `v1.2.0`): it tags the validated commit and runs `gh skill publish --tag <tag>`, creating the GitHub release that `gh skill install --pin` and `gh skill update` resolve.
+
 ## Skill structure
 
 ```

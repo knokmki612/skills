@@ -1,0 +1,86 @@
+name: Publish skills
+
+on:
+  pull_request:
+    paths:
+      - "skills/**"
+      - ".github/workflows/publish.yml"
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - ".github/workflows/publish.yml"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag (semver, e.g. v1.2.0)
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  validate:
+    name: Validate skills (dry run)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Check that gh supports skill commands (v2.90.0 or later)
+        run: gh skill --help >/dev/null
+
+      - name: gh skill publish --dry-run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh skill publish --dry-run
+
+  publish:
+    name: Publish release
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: publish-skills
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ inputs.tag }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Validate the tag
+        run: |
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::tag must be semver like v1.2.0, got '$TAG'"
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            echo "::error::tag $TAG already exists"
+            exit 1
+          fi
+
+      # Pin the tag to the commit the validate job checked, so the release
+      # cannot drift to a newer main head between validation and publish.
+      - name: Tag the validated commit
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/git/refs" --method POST \
+            -f "ref=refs/tags/$TAG" -f "sha=$GITHUB_SHA"
+
+      - name: gh skill publish
+        run: gh skill publish --tag "$TAG"
+
+      - name: Check the agent-skills discovery topic
+        run: |
+          if gh api "repos/$GITHUB_REPOSITORY/topics" --jq '.names[]' | grep -qx agent-skills; then
+            echo "Repository carries the agent-skills topic."
+          else
+            echo "::warning::The repository lacks the agent-skills topic, so gh skill search cannot find it. Apply it once with an admin token: gh repo edit $GITHUB_REPOSITORY --add-topic agent-skills"
+          fi
