@@ -28,12 +28,12 @@ run the provenance test and check for a living fact inside — but it is the
 trigger to classify deliberately:
 
 - Past tense about the codebase itself: "was", "used to", "previously",
-  "moved from", "renamed from", "以前は", "従来は", "〜に伴い", "〜を廃止".
+  "moved from", "renamed from", "retired", "following the change to".
 - Issue/PR numbers or dates used as narrative anchors: "since #123", "after
   the redesign". (A PR number *inside a kept guard* as a pointer to deeper
   discussion is fine — a pointer is not narration.)
 - Change-request framing: "per review feedback", "as discussed", "the owner
-  decided", "エージェントの判断で".
+  decided", "at the agent's discretion".
 - Before/after comparisons whose "before" no longer exists in the tree.
 - Apologies and journals: "temporary workaround until…" (check whether "until"
   already happened), "keeping this for now".
@@ -62,15 +62,15 @@ left for themselves, the trail from draft to conclusion, options that were
 never decided between. Each marks a passage to classify deliberately:
 
 - Notes to self: "revisit later", "to be confirmed", "draft", "tentative",
-  「後で見直す」「要確認」「暫定」「検討中」.
-- Trails: "at first A, then B", "changed to", "update:", "addendum:",
-  「追記:」「変更:」「〜に変更しました」; a revision-history section inside a
-  document that is not a changelog.
-- Options left side by side: "plan A / plan B" with no choice stated,
-  「旧案」, "alternatively…", struck-through text kept next to its replacement.
-- Chat voice: "as discussed", "per your request", "I have updated",
-  「以下のとおり修正しました」 — a message to the requester, written into the
-  document.
+  "still under consideration".
+- Trails: "at first A, then B", "changed to", "update:", "addendum:", "now
+  updated to"; a revision-history section inside a document that is not a
+  changelog.
+- Options left side by side: "plan A / plan B" with no choice stated, "the
+  earlier proposal", "alternatively…", struck-through text kept next to its
+  replacement.
+- Chat voice: "as discussed", "per your request", "I have updated the
+  following" — a message to the requester, written into the document.
 
 A rejected alternative earns its place only where the document exists to
 record the decision (an ADR, a design review): there it is stated as a
@@ -175,21 +175,21 @@ rest:
 
 ### REWRITE — a conclusion stated as a trail (deliverable)
 
-> 当初はキャッシュ TTL を本番・開発とも 1 時間としていたが、レビューで
-> webhook 起点のデプロイが古い内容を見る問題が指摘されたため、本番のみ
-> 1 秒に変更した。
+> The cache TTL was initially one hour in both production and development.
+> Review found that webhook-triggered deploys could serve stale content, so
+> production was changed to one second.
 
 The reader of the report needs the state and its reason, not the path. The
 path is the conversation's record:
 
-> 本番のキャッシュ TTL は 1 秒、開発は 1 時間とする。webhook 起点のデプロイ
-> が常に最新の内容を取得する必要があるため。
+> Production cache TTL is one second; development is one hour.
+> Webhook-triggered deploys must always fetch fresh content.
 
 ### DELETE — a working note left in a deliverable
 
-> ## 移行手順
+> ## Migration steps
 >
-> （この節は要確認。手順 3 は暫定で、後で見直す。）
+> (This section still needs checking. Step 3 is tentative; revisit later.)
 >
 > 1. …
 
