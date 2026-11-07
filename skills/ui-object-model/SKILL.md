@@ -1,51 +1,51 @@
 ---
 name: ui-object-model
-description: UI 設計（Figma、ワイヤー、仕様書、既存画面）を変更・反映・比較する作業の前に、その設計のオブジェクトモデル（主語・属性・関係・操作・ビュー）を抽出して一枚にまとめ、変更候補を「主従の変更」と「表現の変更」に分けて確認用の問いを作る。トリガー：「反映」「移植」「改善案」「比較」「代替案」「この設計を元に」など、既存設計を起点にする依頼。設計者へのヒアリングの直後と、相手の構造部品（アコーディオン、タブ、展開できるリスト項目など）を別の構造に置き換えると決めた時にも使う。自分の設計を一から作る依頼では使わない。
+description: Before changing, porting, or comparing a UI design (Figma, wireframes, specs, existing screens), extract its object model (subjects, attributes, relationships, actions, views) onto one page, split the changes you plan into "subject changes" and "presentation changes", and write confirmation questions for the designer. Use for requests that start from an existing design — "apply", "port", "propose improvements", "compare", "alternatives", "based on this design". Also use right after a hearing with the designer, and when you decide to replace one of the designer's structural components (accordion, tabs, expandable list items, etc.) with a different structure. Do not use when designing from scratch.
 license: CC-BY-4.0
 ---
 
-# UI のオブジェクトモデル分析
+# UI Object Model Analysis
 
-## 位置づけ
+## Purpose
 
-UI 設計を変更・反映・比較する前に、その設計が何を主語（オブジェクト）とし、何を属性・関係・操作としているかを書き出し、確認するための手順。設計を作るスキルではなく、設計を触る前の前処理。
+Before changing, porting, or comparing a UI design, write down what that design treats as its subject (the object), and what it treats as attributes, relationships, and actions — then confirm it. This skill does not create designs; it is the preprocessing step before you touch one.
 
-主語を取り違えたまま変更を重ねると、個々の変更に理由があっても、相手には「踏襲されていない」と読まれる。先に主語を書き出しておけば、自分の変更のうちどれが主従を変えるものかが分かり、確認すべきことが数問に絞れる。
+If you keep stacking changes while misreading the subject, each change may have its own reason, yet the designer will read the result as "not following our design". Writing the subject down first shows which of your changes alter the subject, and narrows what you need to confirm to a few questions.
 
-## いつ使うか
+## When to use
 
-- **既存設計を起点にする依頼**：「反映」「移植」「改善案」「比較」「代替案」「この設計を元に」など。
-- **設計者へのヒアリングの直後**：聞いた内容が主語・属性・関係のどれに関わるかを、記憶が新しいうちに書き出す。ヒアリングメモを手順 1 の「意図が分かる資料」として使う。
-- **相手の構造部品を置き換えると決めた時**：アコーディオンを詳細画面への遷移にする、タブをセクションにする、などを決めた時点で止まって使う。構造部品の置き換えは主従の変更に当たるので、手順 5 で主従の変更に分類し、手順 6 で問いにする。
+- **Requests that start from an existing design**: "apply", "port", "propose improvements", "compare", "alternatives", "based on this design".
+- **Right after a hearing with the designer**: while the memory is fresh, write down whether what you heard bears on subjects, attributes, or relationships. Use the hearing notes as the "material showing the designer's intent" in step 1.
+- **When you decide to replace one of the designer's structural components**: turning an accordion into navigation to a detail screen, tabs into sections, and so on. Stop at the moment you decide and use this skill. Replacing a structural component is a subject change, so classify it as one in step 5 and turn it into a question in step 6.
 
-自分の設計を一から作る依頼では使わない。
+Do not use when designing from scratch.
 
-## 手順
+## Procedure
 
-1. **入力の確定。** 対象の設計（画面一覧）と、設計者の意図が分かる資料（コメント、ヒアリングメモ）を特定する。無ければ「意図は未確認」と明示して進める。Figma の読み取りが要る場合は、呼び出し側の Figma ツールを使う。
-2. **オブジェクトの抽出。** 画面に現れる名詞を列挙し、次の 4 種に振り分ける。
-   - **オブジェクト**：利用者が「これ」と指せるもの（コンテンツ、組織、確認）
-   - **属性**：オブジェクトに付く値（国、種別、ロゴ）
-   - **関係**：オブジェクト間のつながり（作成者、掲載者、確認した団体）
-   - **ビュー**：コレクション／シングルのどちらで見せているか
-3. **主従の判定。** 各画面で「コレクションの単位は何か」「見出しは何の名前か」「コンポーネントは何を表しているか」を答え、主語を一つ決める。主語が決まらない画面は「混在」と記録する。
-4. **制約由来の洗い出し。** 主従や配置が、表示先の制約（レイアウト、ビューポート、表示デバイス）から来ている箇所を特定し、「制約が外れたら見直す」とマークする。
-5. **変更候補の分類。** 自分が加えようとしている変更を次の二つに分ける。
-   - **主従の変更**：主語を変える、関係を属性に変える、相手の構造部品を別の構造に置き換える
-   - **表現の変更**：記号、色、文言、並び
+1. **Fix the inputs.** Identify the target design (the list of screens) and any material that shows the designer's intent (comments, hearing notes). If there is none, state "intent unconfirmed" and continue. If you need to read Figma, use the caller's Figma tools.
+2. **Extract the objects.** List the nouns that appear on screen and sort them into four kinds:
+   - **Object**: something the user can point at as "this" (a piece of content, an organization, a verification)
+   - **Attribute**: a value attached to an object (country, type, logo)
+   - **Relationship**: a link between objects (author, publisher, the organization that verified it)
+   - **View**: whether it is shown as a collection or as a single item
+3. **Decide the subject.** For each screen, answer "what is the unit of the collection?", "whose name is the heading?", and "what does each component represent?", and settle on one subject. Record a screen whose subject cannot be settled as "mixed".
+4. **Find constraint-driven choices.** Identify where the subject or the layout comes from constraints of the display target (layout, viewport, device), and mark them "revisit when the constraint is lifted".
+5. **Classify your planned changes.** Split the changes you intend to make into:
+   - **Subject changes**: changing the subject, turning a relationship into an attribute, replacing the designer's structural component with a different structure
+   - **Presentation changes**: symbols, color, wording, order
 
-   主従の変更は設計者に確認してから進める。表現の変更は根拠を添えて進める。
-6. **確認用の問いの生成。** 問いにするのは主従に関わる箇所だけ。「この画面の主語は○○と理解しました。違っていたら教えてください」「○○は××の属性として扱われている、と理解しました。違っていたら教えてください」の形で 3 問以内に絞る。表現の変更は問いにしない。
-7. **出力。** [references/template.md](references/template.md) のテンプレートで一枚にまとめる。
+   Confirm subject changes with the designer before proceeding. Proceed with presentation changes, stating your reasons.
+6. **Write the confirmation questions.** Ask only about what bears on the subject. Use the forms "I understood the subject of this screen to be X. Please tell me if that's wrong." and "I understood X to be treated as an attribute of Y. Please tell me if that's wrong.", and keep it to three questions or fewer. Do not ask about presentation changes.
+7. **Output.** Put everything on one page using the template in [references/template.md](references/template.md).
 
-## ガードレール
+## Guardrails
 
-- 主語を変える変更を、確認前に成果物に入れない。
-- 設計の弱点を列挙する場ではない。「残っていること」に書くのは、変更の根拠になるものだけ。
-- 問いは否定形の確認（「違っていたら教えてください」）で書く。
-- 出力は一枚、問いは 3 つ以内。長い資料にしない。
+- Do not put a change of subject into a deliverable before it is confirmed.
+- This is not the place to list the design's weaknesses. Under "what remains", write only what serves as a reason for a change.
+- Write questions as negative confirmations ("Please tell me if that's wrong.").
+- One page of output, three questions or fewer. Do not turn it into a long document.
 
-## 参照
+## References
 
-- [references/template.md](references/template.md) — 出力テンプレート
-- [references/example.md](references/example.md) — 事例。主従の逆転、制約由来の切り方の持ち込み、構造部品の置き換え、確認の問いの例
+- [references/template.md](references/template.md) — output template
+- [references/example.md](references/example.md) — a case: the subject inverted, a constraint-driven cut carried over, a structural component replaced, and example confirmation questions

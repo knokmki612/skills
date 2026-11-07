@@ -1,30 +1,30 @@
-# オブジェクトモデル分析：<対象の名前>
+# Object model analysis: <target name>
 
-## 対象と出典
+## Target and sources
 
-- 対象：<画面一覧、Figma のファイル・フレーム、仕様書など>
-- 意図の出典：<コメント、ヒアリングメモなど。無ければ「意図は未確認」>
+- Target: <list of screens, Figma file / frames, spec, etc.>
+- Source of intent: <comments, hearing notes, etc. If none, "intent unconfirmed">
 
-## オブジェクト表
+## Object table
 
-| 名詞 | 種別（オブジェクト・属性・関係） | 現れる画面 |
+| Noun | Kind (object / attribute / relationship) | Screens where it appears |
 |---|---|---|
 | | | |
 
-## 画面ごとの主語
+## Subject per screen
 
-| 画面 | コレクションの単位 | 見出しが指すもの | コンポーネントが指すもの | 備考（混在・制約由来） |
+| Screen | Unit of the collection | What the heading names | What the components represent | Notes (mixed / constraint-driven) |
 |---|---|---|---|---|
 | | | | | |
 
-## 自分の変更候補
+## Your planned changes
 
-| 変更 | 分類（主従・表現） | 根拠 | 確認が要るか |
+| Change | Kind (subject / presentation) | Reason | Needs confirmation? |
 |---|---|---|---|
 | | | | |
 
-## 設計者への問い（3 つ以内）
+## Questions for the designer (three or fewer)
 
-1. <この画面の主語は○○と理解しました。違っていたら教えてください>
+1. <I understood the subject of this screen to be X. Please tell me if that's wrong.>
 2.
 3.

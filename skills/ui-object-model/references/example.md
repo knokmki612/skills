@@ -1,45 +1,45 @@
-# 事例：主従の逆転に気づかず代替案を出した例
+# Case: proposing alternatives without noticing the subject was inverted
 
-## 状況
+## Situation
 
-Android アプリで、カメラで読み取った食品パッケージの各構成要素（原材料、添加物、包装材）について「誰が供給しているか」を示す UI。外部デザイナーの案（以下「相手案」）があり、自分たちはそれを元に改善案（以下「自案」）を作って提示した。提示後、発注側の責任者から「相手案を踏襲していない」として差し戻された。
+An Android app UI that shows, for each component of a food package read by the camera (ingredients, additives, packaging material), "who supplies it". An outside designer had a proposal (hereafter "their design"), and we built an improved proposal on top of it (hereafter "our design") and presented it. After the presentation, the client-side lead sent it back, saying it "does not follow their design".
 
-## 相手案のオブジェクトモデル（後から書き出したもの）
+## Object model of their design (written down afterwards)
 
-| 名詞 | 種別 | 現れる画面 |
+| Noun | Kind | Screens where it appears |
 |---|---|---|
-| 構成要素（原材料・添加物・包装材） | オブジェクト | 一覧（コレクションの単位） |
-| 事業者 | オブジェクト | 一覧（構成要素の属性として）、詳細（シングル） |
-| 認証（第三者による） | オブジェクト | 詳細 |
-| 製品 | オブジェクト（別の層） | 一覧の最上部 |
-| 製造者・供給者 | 関係 | 一覧（見出しラベル） |
-| 産地、種別、ロゴ | 属性 | 一覧 |
+| Component (ingredient / additive / packaging material) | Object | List (the unit of the collection) |
+| Business | Object | List (as an attribute of the component), detail (single) |
+| Certification (by a third party) | Object | Detail |
+| Product | Object (a separate layer) | Top of the list |
+| Manufacturer / supplier | Relationship | List (heading labels) |
+| Origin, type, logo | Attribute | List |
 
-一覧の主語は構成要素。見出しは構成要素の種別、その下に事業者のカード。パッケージ表示の構造と一覧の構造が一致する切り方。
+The subject of the list is the component. Headings are component types, with business cards under them. The list is cut so that its structure matches the structure of the package labeling.
 
-## 自案で起きたこと
+## What happened in our design
 
-- 一覧の主語を事業者にし、構成要素の種別をカード内のチップ（属性）にした。主従が相手案と逆。
-- この切り方は、当初の器（ホーム画面ウィジェット）で「カード単体で読める」必要があったことから来ていた。器を全画面のボトムシートに変えた派生案にも、そのまま持ち込んだ。制約由来の切り方を、制約が外れた後も見直さなかった。
-- 相手案の構造部品（展開できるリスト項目で一段深く見せる）を、意図を聞く前に別の構造（詳細画面へ遷移）に置き換えた。
-- 見せる順番で、相手案から最も遠い案を「現在の案」として先頭に置き、相手案に近い案を派生として後ろに並べた。
+- We made the business the subject of the list and turned the component type into a chip (an attribute) inside the card. The subject was the reverse of their design.
+- This cut came from the original container (a home-screen widget), where each card had to be readable on its own. We carried it unchanged into a derivative that moved the container to a full-screen bottom sheet. We did not revisit a constraint-driven cut after the constraint was lifted.
+- Before asking about intent, we replaced their structural component (expandable list items that show one level deeper) with a different structure (navigation to a detail screen).
+- In presentation order, we put the design furthest from theirs first as "the current proposal", and lined up the ones closer to theirs behind it as derivatives.
 
-## 相手が「踏襲されていない」と読んだ理由
+## Why they read it as "not following their design"
 
-相手案の核（構成要素を主語にしたセクショニング、展開できるリスト項目、既定ではカメラ映像上のハイライトを出さない）の三つが、自案の主案ではどれも採られていなかった。個々の変更に理由はあったが、三つ揃って外れていれば、理由を読む前に「踏襲していない」と判断される。
+The three cores of their design — sectioning with the component as the subject, expandable list items, and not showing highlights over the camera view by default — were all absent from our main proposal. Each change had its reason, but when all three are missing, people judge "it doesn't follow our design" before they read the reasons.
 
-## このスキルを使っていれば
+## Had this skill been used
 
-変更前に、相手案の主語が「構成要素」であることを書き出した時点で、自案の主語が「事業者」であることが主従の変更だと分かる。確認用の問いはこうなる。
+Before making changes, writing down that the subject of their design is "the component" would have shown that making "the business" our subject is a subject change. The confirmation questions would have been:
 
-1. 一覧の主語は構成要素（原材料・添加物・包装材）で、事業者はその属性として見せている、と理解しました。違っていたら教えてください
-2. 展開できるリスト項目は「遷移せずに一段深い情報を見せる」ための部品で、詳細画面への遷移を置き換える意図ではない、と理解しました。違っていたら教えてください
-3. 製品（ブランド）は、構成要素とは別の層として扱っている、と理解しました。違っていたら教えてください
+1. I understood the subject of the list to be the component (ingredient / additive / packaging material), with the business shown as its attribute. Please tell me if that's wrong.
+2. I understood the expandable list items to be a component for showing one level deeper without navigating, not meant to be replaced by navigation to a detail screen. Please tell me if that's wrong.
+3. I understood the product (brand) to be treated as a layer separate from the components. Please tell me if that's wrong.
 
-この3問に答えが返れば、自案の変更は「表現の変更」（産地の国旗をテキストに、認証バッジを外す、記号の整理）に絞られ、主従はそのままで提示できた。
+With answers to these three, our changes would have narrowed to "presentation changes" (origin flags to text, removing the certification badge, tidying symbols), and we could have presented them with the subject left as it was.
 
-## 教訓
+## Lessons
 
-- 制約から来た切り方は、制約が外れた時点で見直す対象になる
-- 相手の構造部品を置き換えるのは主従の変更に当たる。表現の変更と同じ扱いで進めない
-- 見せる順番は、相手案に最も近い案を先頭にする。差分で語る
+- A cut that came from a constraint is up for review once the constraint is lifted.
+- Replacing the designer's structural component is a subject change. Do not treat it like a presentation change.
+- In presentation order, put the proposal closest to theirs first, and talk in diffs.
